@@ -1,0 +1,42 @@
+version: "3.8"
+
+networks:
+  default:
+
+services:
+  fms-api:
+    container_name: fms-api
+    # depends_on:
+    #   - mysql-db
+    build: ./fms-api
+    restart: unless-stopped
+    env_file: ./.env
+    ports:
+      - $API_APP_LOCAL_PORT:$API_APP_DOCKER_PORT
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./fms-api:/app
+      - /app/node_modules
+    networks:
+      - default
+
+  fms-frontend:
+    container_name: fms-frontend
+    # depends_on:
+    # - nestjs-app
+    build:
+      context: ./fms-frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file: ./.env
+    ports:
+      - $FRONTEND_APP_LOCAL_PORT:$FRONTEND_APP_DOCKER_PORT
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./fms-frontend:/app
+      - /app/node_modules
+      - /app/.next
+    networks:
+      - default

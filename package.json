@@ -1,0 +1,15 @@
+{
+  "name": "football-matches-simulator",
+  "version": "1.0.0",
+  "description": "Football matches simulator with NestJS and NextJS",
+  "scripts": {
+    "build:back": "docker-compose build fms-api",
+    "build:front": "docker-compose build fms-frontend",
+    "start:db": "docker-compose up mysql-db",
+    "start:back": "docker-compose up fms-api --renew-anon-volumes",
+    "start:front": "docker-compose up fms-frontend --renew-anon-volumes",
+    "clean": "docker-compose down -v"
+  },
+  "author": "Patryk Domałeczny",
+  "license": "ISC"
+}
