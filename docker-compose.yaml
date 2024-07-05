@@ -11,6 +11,11 @@ services:
     build: ./fms-api
     restart: unless-stopped
     env_file: ./.env
+    environment:
+      DATABASE_NAME: $DATABASE_NAME
+      DATABASE_USER: $DATABASE_USER
+      DATABASE_PASS: $DATABASE_PASS
+      DATABASE_URI: $DATABASE_URI
     ports:
       - $API_APP_LOCAL_PORT:$API_APP_DOCKER_PORT
     stdin_open: true
@@ -20,11 +25,11 @@ services:
       - /app/node_modules
     networks:
       - default
+    depends_on:
+      - database
 
   fms-frontend:
     container_name: fms-frontend
-    # depends_on:
-    # - nestjs-app
     build:
       context: ./fms-frontend
       dockerfile: Dockerfile
@@ -40,3 +45,23 @@ services:
       - /app/.next
     networks:
       - default
+
+  database:
+    image: mongo:latest
+    container_name: mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    env_file: ./.env
+    environment:
+      MONOGO_INITDB_DATABASE: $DATABASE_NAME
+      MONGO_INITDB_ROOT_USERNAME: $DATABASE_USER
+      MONGO_INITDB_ROOT_PASSWORD: $DATABASE_PASS
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - default
+
+volumes:
+  mongo-data:
+    driver: local
