@@ -28,6 +28,7 @@ export class SimulationsController {
   async getCurrentSimulation(): Promise<SimulationResponse> {
     const currentSimulation =
       await this.simulationService.getCurrentSimulation();
+
     return this.formatResponse(currentSimulation);
   }
   @Post()
@@ -37,6 +38,7 @@ export class SimulationsController {
     try {
       const simulation =
         await this.simulationService.createOrStartNewSimulation(newSimulation);
+
       return this.formatResponse(simulation);
     } catch (error) {
       this.handleError(error);
@@ -51,6 +53,7 @@ export class SimulationsController {
       const endedSimulation = await this.simulationService.endSimulation(
         simulation.name,
       );
+      
       return this.formatResponse(endedSimulation);
     } catch (error) {
       this.handleError(error);

@@ -1,5 +1,6 @@
 # ⚽ Football matches simulator
 
+[![Screenshot-2024-07-07-at-16-50-14.png](https://i.postimg.cc/rw0MnXs2/Screenshot-2024-07-07-at-16-50-14.png)](https://postimg.cc/xX2w8ZL6)
 [![Screenshot-2024-07-07-at-16-31-48.png](https://i.postimg.cc/wBXVQZQ6/Screenshot-2024-07-07-at-16-31-48.png)](https://postimg.cc/06ND8t43)
 
 ## Description
@@ -57,7 +58,7 @@ Backend is running [http://localhost:3001](http://localhost:3001)
 ```
 
 ## Tests
-Test were only implemented for the backend part
+Test were only implemented for the backend part as Frontend was only implemented for testing purpose
 
 Instructions to run it:
 ```bash
@@ -67,5 +68,10 @@ $ yarn test
 ```
 
 ## Scalability improvements
+##### ///TODO
 
-### TODO
+
+## Comments to reviewers
+- Frontend part was only implemented for testing purpose
+- I decided to use docker for better local development
+- I didn't decide to store data in memory, wanted to use MongoDB as the storage for better scalability

@@ -30,12 +30,14 @@ export class SimulationService {
     newSimulation: CreateOrStartNewSimulationDTO,
   ): Promise<SimulationPayload> {
     const currentSimulation = await this.getCurrentSimulation();
+
     if (currentSimulation) {
       return this.handleExistingSimulation(
         currentSimulation,
         newSimulation.name,
       );
     }
+
     return this.createNewSimulation(newSimulation);
   }
 
@@ -43,9 +45,11 @@ export class SimulationService {
     currentSimulation: SimulationPayload,
     newSimulationName: string,
   ): Promise<SimulationPayload> {
+    
     if (this.canRestartSimulation(currentSimulation)) {
       return this.startSimulation(newSimulationName);
     }
+
     throw new HttpException(
       "Can't run simulation sooner than 5 seconds after previous run",
       HttpStatus.BAD_REQUEST,
@@ -56,6 +60,7 @@ export class SimulationService {
     newSimulation: CreateOrStartNewSimulationDTO,
   ): Promise<SimulationPayload> {
     await this.simulationModel.deleteMany({});
+
     const simulation = new this.simulationModel({
       name: newSimulation.name,
       state: SimulationStates.Ready,
@@ -63,6 +68,7 @@ export class SimulationService {
       startDate: new Date(),
     });
     const savedSimulation = await simulation.save();
+
     return this.startSimulation(savedSimulation.name);
   }
 
@@ -76,6 +82,7 @@ export class SimulationService {
       this.logger.warn(
         `Simulation ${simulationName} - seconds left: ${this.SIMULATION_DURATION - elapsedTime}`,
       );
+
       await this.applyGoalScoringEvent(simulationName);
 
       if (elapsedTime === this.SIMULATION_DURATION - 1) {
@@ -101,6 +108,7 @@ export class SimulationService {
 
   async endSimulation(simulationName: string): Promise<SimulationPayload> {
     this.schedulerRegistry.deleteInterval(simulationName);
+
     const simulation = await this.simulationModel
       .findOneAndUpdate(
         { name: simulationName },
@@ -110,6 +118,7 @@ export class SimulationService {
       .exec();
 
     this.logEndResults(simulation);
+
     return simulation;
   }
 
@@ -118,6 +127,7 @@ export class SimulationService {
     const simulation = await this.simulationModel
       .findOne({ name: simulationName })
       .exec();
+
     const updatedGames = this.gameService.scoreOneRandomGoal(simulation.games);
     const updatedSimulation = await this.simulationModel
       .findOneAndUpdate(
@@ -126,13 +136,16 @@ export class SimulationService {
         { new: true },
       )
       .exec();
+
     this.liveUpdateService.sendSimulationUpdateToAllClients(updatedSimulation);
   }
 
   private canRestartSimulation(simulation: SimulationPayload): boolean {
     const now = new Date();
     const startDate = simulation.startDate;
+
     const secondsElapsed = (now.getTime() - startDate.getTime()) / 1000;
+
     return secondsElapsed > this.MIN_RESTART_DELAY;
   }
 
