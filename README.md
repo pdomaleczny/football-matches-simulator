@@ -67,10 +67,6 @@ $ yarn install
 $ yarn test
 ```
 
-## Scalability improvements
-##### ///TODO
-
-
 ## Comments to reviewers
 - Frontend part was only implemented for testing purpose
 - I decided to use docker for better local development
