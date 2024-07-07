@@ -39,6 +39,7 @@ export class SimulationController {
     try {
       const simulation =
         await this.simulationService.createOrStartNewSimulation(newSimulation);
+
       return this.formatResponse(simulation);
     } catch (error) {
       this.handleError(error);
