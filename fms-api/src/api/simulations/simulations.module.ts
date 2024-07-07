@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { SimulationsController } from './simulations.controllers';
+import { SimulationController } from './simulations.controller';
 import { SimulationService } from './simulations.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Simulation, SimulationSchema } from './simulations.schema';
 import { GameService } from '../games/games.service';
 import { SchedulerRegistry } from '@nestjs/schedule';
-import { LiveUpdateModule } from '../liveupdate/liveupdate.module';
+import { LiveUpdateModule } from '../liveupdates/liveupdates.module';
 
 @Module({
   imports: [
@@ -14,7 +14,7 @@ import { LiveUpdateModule } from '../liveupdate/liveupdate.module';
       { name: Simulation.name, schema: SimulationSchema },
     ]),
   ],
-  controllers: [SimulationsController],
+  controllers: [SimulationController],
   providers: [SimulationService, GameService, SchedulerRegistry],
 })
-export class SimulationsModule {}
+export class SimulationModule {}

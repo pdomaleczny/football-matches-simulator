@@ -6,14 +6,14 @@ import { Model } from 'mongoose';
 import { SimulationPayload } from './simulations.payload';
 import { GameService } from '../games/games.service';
 import { SchedulerRegistry } from '@nestjs/schedule';
-import { LiveUpdateService } from '../liveupdate/liveupdate.service';
+import { LiveUpdateService } from '../liveupdates/liveupdates.service';
 
 @Injectable()
 export class SimulationService {
   private readonly logger = new Logger(SimulationService.name);
   private readonly SIMULATION_DURATION = 10; // seconds
   private readonly INTERVAL_DURATION = 1000; // milliseconds
-  private readonly MIN_RESTART_DELAY = 5; // seconds
+  private readonly MIN_RESTART_DELAY = 5000; // milliseconds
 
   constructor(
     @InjectModel(Simulation.name) private simulationModel: Model<Simulation>,
@@ -32,28 +32,22 @@ export class SimulationService {
     const currentSimulation = await this.getCurrentSimulation();
 
     if (currentSimulation) {
-      return this.handleExistingSimulation(
-        currentSimulation,
-        newSimulation.name,
-      );
+      const currentTime = Date.now();
+
+      const timeSinceLastStart =
+        currentTime - currentSimulation.startDate.getTime();
+
+      if (timeSinceLastStart < this.MIN_RESTART_DELAY) {
+        throw new HttpException(
+          "Can't run simulation sooner than 5 seconds after previous run",
+          HttpStatus.BAD_REQUEST,
+        );
+      } else {
+        return this.startSimulation(newSimulation.name);
+      }
     }
 
     return this.createNewSimulation(newSimulation);
-  }
-
-  private async handleExistingSimulation(
-    currentSimulation: SimulationPayload,
-    newSimulationName: string,
-  ): Promise<SimulationPayload> {
-    
-    if (this.canRestartSimulation(currentSimulation)) {
-      return this.startSimulation(newSimulationName);
-    }
-
-    throw new HttpException(
-      "Can't run simulation sooner than 5 seconds after previous run",
-      HttpStatus.BAD_REQUEST,
-    );
   }
 
   private async createNewSimulation(
@@ -61,15 +55,14 @@ export class SimulationService {
   ): Promise<SimulationPayload> {
     await this.simulationModel.deleteMany({});
 
-    const simulation = new this.simulationModel({
+    const simulation = await this.simulationModel.create({
       name: newSimulation.name,
       state: SimulationStates.Ready,
       games: this.gameService.getDefaultGames(),
       startDate: new Date(),
     });
-    const savedSimulation = await simulation.save();
 
-    return this.startSimulation(savedSimulation.name);
+    return this.startSimulation(simulation.name);
   }
 
   private async startSimulation(
@@ -93,7 +86,7 @@ export class SimulationService {
 
     this.schedulerRegistry.addInterval(simulationName, interval);
 
-    return this.simulationModel
+    const updatedSimulation = this.simulationModel
       .findOneAndUpdate(
         { name: simulationName },
         {
@@ -104,6 +97,8 @@ export class SimulationService {
         { new: true },
       )
       .exec();
+
+    return updatedSimulation;
   }
 
   async endSimulation(simulationName: string): Promise<SimulationPayload> {
@@ -138,15 +133,6 @@ export class SimulationService {
       .exec();
 
     this.liveUpdateService.sendSimulationUpdateToAllClients(updatedSimulation);
-  }
-
-  private canRestartSimulation(simulation: SimulationPayload): boolean {
-    const now = new Date();
-    const startDate = simulation.startDate;
-
-    const secondsElapsed = (now.getTime() - startDate.getTime()) / 1000;
-
-    return secondsElapsed > this.MIN_RESTART_DELAY;
   }
 
   private logEndResults(simulation: SimulationPayload): void {

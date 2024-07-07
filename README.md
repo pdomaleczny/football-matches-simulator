@@ -58,7 +58,7 @@ Backend is running [http://localhost:3001](http://localhost:3001)
 ```
 
 ## Tests
-Test were only implemented for the backend part as Frontend was only implemented for testing purpose
+Tests were only implemented for the backend part as Frontend was only implemented for testing purpose
 
 Instructions to run it:
 ```bash

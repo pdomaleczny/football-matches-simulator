@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { LiveUpdateGateway } from './liveupdate.gateway';
+import { LiveUpdateGateway } from './liveupdates.gateway';
 import { SimulationPayload } from '../simulations/simulations.payload';
 
 @Injectable()

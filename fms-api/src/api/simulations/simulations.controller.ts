@@ -21,7 +21,7 @@ interface SimulationResponse {
 
 @Controller()
 @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
-export class SimulationsController {
+export class SimulationController {
   constructor(private readonly simulationService: SimulationService) {}
 
   @Get()
@@ -31,6 +31,7 @@ export class SimulationsController {
 
     return this.formatResponse(currentSimulation);
   }
+
   @Post()
   async createOrStartSimulation(
     @Body() newSimulation: CreateOrStartNewSimulationDTO,
@@ -38,7 +39,6 @@ export class SimulationsController {
     try {
       const simulation =
         await this.simulationService.createOrStartNewSimulation(newSimulation);
-
       return this.formatResponse(simulation);
     } catch (error) {
       this.handleError(error);
@@ -53,7 +53,7 @@ export class SimulationsController {
       const endedSimulation = await this.simulationService.endSimulation(
         simulation.name,
       );
-      
+
       return this.formatResponse(endedSimulation);
     } catch (error) {
       this.handleError(error);

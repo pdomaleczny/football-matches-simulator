@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
-import { SimulationsModule } from './simulations/simulations.module';
+import { SimulationModule } from './simulations/simulations.module';
 import { RouterModule } from '@nestjs/core';
 
 @Module({
   imports: [
-    SimulationsModule,
+    SimulationModule,
     RouterModule.register([
       {
         path: 'simulations',
-        module: SimulationsModule,
+        module: SimulationModule,
       },
     ]),
   ],

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { RouterModule } from '@nestjs/core';
 import { ApiModule } from './api/api.module';
-import { SimulationsModule } from './api/simulations/simulations.module';
+import { SimulationModule } from './api/simulations/simulations.module';
 import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
@@ -21,7 +21,7 @@ import { MongooseModule } from '@nestjs/mongoose';
         children: [
           {
             path: 'simulations',
-            module: SimulationsModule,
+            module: SimulationModule,
           },
         ],
       },
