@@ -64,7 +64,12 @@ Instructions to run it:
 ```bash
 $ cd fms-api
 $ yarn install
+
+#  unit tests
 $ yarn test
+
+#  e2e tests
+$ yarn test:e2e
 ```
 
 ## Comments to reviewers
