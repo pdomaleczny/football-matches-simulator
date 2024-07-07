@@ -5,9 +5,11 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Simulation, SimulationSchema } from './simulations.schema';
 import { GameService } from '../games/games.service';
 import { SchedulerRegistry } from '@nestjs/schedule';
+import { LiveUpdateModule } from '../liveupdate/liveupdate.module';
 
 @Module({
   imports: [
+    LiveUpdateModule,
     MongooseModule.forFeature([
       { name: Simulation.name, schema: SimulationSchema },
     ]),

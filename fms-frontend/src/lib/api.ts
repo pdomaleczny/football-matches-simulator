@@ -17,14 +17,17 @@ const fetchWrapper = async (
     });
     return response.json();
   } catch (error) {
-    console.error(error);
+    return { error: error };
   }
 };
 
 export const sendToApiGetCurrentGameSimulation = async () =>
   await fetchWrapper(`${API_URL}/simulations`, "GET");
 
-export const sendToApiCreateNewGameSimulation = async (name: string) =>
+export const sendToApiStartSimulation = async (name: string) =>
   await fetchWrapper(`${API_URL}/simulations`, "POST", {
     name,
   });
+
+export const sendToApiEndSimulation = async (name: string) =>
+  await fetchWrapper(`${API_URL}/simulations/end`, "POST", { name });

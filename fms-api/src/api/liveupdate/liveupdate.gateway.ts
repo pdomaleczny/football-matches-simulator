@@ -3,14 +3,18 @@ import {
   OnGatewayConnection,
   OnGatewayDisconnect,
   OnGatewayInit,
-  SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
 
 import { Server } from 'socket.io';
 
-@WebSocketGateway()
+@WebSocketGateway(3002, {
+  cors: {
+    origin: '*',
+  },
+  transports: ['websocket'],
+})
 export class LiveUpdateGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
@@ -22,7 +26,7 @@ export class LiveUpdateGateway
     this.logger.log('Initialized');
   }
 
-  handleConnection(client: any, ...args: any[]) {
+  handleConnection(client: any) {
     const { sockets } = this.io.sockets;
 
     this.logger.log(`Client id: ${client.id} connected`);
@@ -33,13 +37,11 @@ export class LiveUpdateGateway
     this.logger.log(`Cliend id:${client.id} disconnected`);
   }
 
-  @SubscribeMessage('ping')
-  handleMessage(client: any, data: any) {
-    this.logger.log(`Message received from client id: ${client.id}`);
-    this.logger.debug(`Payload: ${data}`);
-    return {
-      event: 'pong',
-      data: 'Wrong data that will make the test fail',
-    };
+  sendToAll(event: string, data: any) {
+    this.io.emit(event, data);
+  }
+
+  sendToClient(clientId: string, event: string, data: any) {
+    this.io.to(clientId).emit(event, data);
   }
 }

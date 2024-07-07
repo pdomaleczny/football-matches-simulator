@@ -2,14 +2,14 @@ import { Prop } from '@nestjs/mongoose';
 
 export class Game {
   @Prop()
-  homeCountryName: string;
+  homeTeam: string;
 
   @Prop()
-  homeCountryScore: number;
+  homeGoals: number;
 
   @Prop()
-  awayCountryName: string;
+  awayTeam: string;
 
   @Prop()
-  awayCountryScore: number;
+  awayGoals: number;
 }

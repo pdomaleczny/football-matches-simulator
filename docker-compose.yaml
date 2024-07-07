@@ -2,12 +2,11 @@ version: "3.8"
 
 networks:
   default:
+    driver: bridge
 
 services:
   fms-api:
     container_name: fms-api
-    # depends_on:
-    #   - mysql-db
     build: ./fms-api
     restart: unless-stopped
     env_file: ./.env
@@ -18,6 +17,7 @@ services:
       DATABASE_URI: $DATABASE_URI
     ports:
       - $API_APP_LOCAL_PORT:$API_APP_DOCKER_PORT
+      - $API_APP_LOCAL_WEBSOCKET_PORT:$API_APP_LOCAL_WEBSOCKET_PORT
     stdin_open: true
     tty: true
     volumes:

@@ -1,40 +1,48 @@
 "use client";
 import { useEffect, useState } from "react";
 import { CreateNewSimulation } from "../components/CreateNewSimulation";
+import { Simulation } from "../components/Simulation";
 import {
-  sendToApiCreateNewGameSimulation,
+  sendToApiStartSimulation,
   sendToApiGetCurrentGameSimulation,
+  sendToApiEndSimulation,
 } from "@/lib/api";
-
-type Simulation = {
-  name: string;
-};
+import { Simulation as SimulationType } from "@/lib/types";
 
 type CreateSimulationData = {
   simulationName: string;
 };
 
 export default function Home() {
-  const [currentSimulation, setCurrentSimulation] = useState<Simulation | null>(
-    null,
-  );
+  const [currentSimulation, setCurrentSimulation] =
+    useState<SimulationType | null>(null);
 
   useEffect(() => {
     const fetchCurrentGame = async () => {
       const { simulation } = await sendToApiGetCurrentGameSimulation();
       if (simulation) {
-        setCurrentSimulation({ name: simulation.name });
+        setCurrentSimulation(simulation);
       }
     };
 
     fetchCurrentGame();
   }, []);
 
-  const handleCreateSimulation = async (data: CreateSimulationData) => {
-    const { simulation } = await sendToApiCreateNewGameSimulation(
+  const handleStartSimulation = async (data: CreateSimulationData) => {
+    const { simulation, error } = await sendToApiStartSimulation(
       data.simulationName,
     );
-    setCurrentSimulation({ name: simulation.name });
+
+    if (error) {
+      return;
+    }
+
+    setCurrentSimulation(simulation);
+  };
+
+  const handleFinishSimulation = async (data: CreateSimulationData) => {
+    const { simulation } = await sendToApiEndSimulation(data.simulationName);
+    setCurrentSimulation(simulation);
   };
 
   return (
@@ -42,9 +50,22 @@ export default function Home() {
       <h1 className="text-4xl font-bold">⚽ Football matches simulator ⚽</h1>
       <div className="flex flex-col mx-auto max-w-[1024px] pt-20">
         {currentSimulation ? (
-          currentSimulation.name
+          <Simulation
+            simulation={currentSimulation}
+            updateSimulationScore={(newSimulation) => {
+              setCurrentSimulation(newSimulation);
+            }}
+            onFinishNewSimulation={() => {
+              handleFinishSimulation({
+                simulationName: currentSimulation.name,
+              });
+            }}
+            onStartNewSimulation={() => {
+              handleStartSimulation({ simulationName: currentSimulation.name });
+            }}
+          />
         ) : (
-          <CreateNewSimulation onCreateNewSimulation={handleCreateSimulation} />
+          <CreateNewSimulation onCreateNewSimulation={handleStartSimulation} />
         )}
       </div>
     </main>

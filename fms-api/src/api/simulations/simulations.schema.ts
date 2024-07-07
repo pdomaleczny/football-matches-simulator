@@ -20,6 +20,9 @@ export class Simulation {
 
   @Prop()
   state: SimulationStates;
+
+  @Prop()
+  startDate: Date;
 }
 
 export const SimulationSchema = SchemaFactory.createForClass(Simulation);
