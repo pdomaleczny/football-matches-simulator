@@ -1,5 +1,7 @@
 # ⚽ Football matches simulator
 
+[![Screenshot-2024-07-07-at-16-31-48.png](https://i.postimg.cc/wBXVQZQ6/Screenshot-2024-07-07-at-16-31-48.png)](https://postimg.cc/06ND8t43)
+
 ## Description
 This project is a football matches simulator. It is a simple web application that allows users to simulate football 3 matches between Germany vs Poland, Brazil vs Mexico, Argentina vs Uruguay.
 
@@ -13,13 +15,56 @@ characters, only digits, whitespaces or alphabetic characters e.g. “Katar 2023
 6. When the simulation is finished, user can restart it. Then the results are reset and the simulation starts again.
 7. User can start, finish and restart the simulation.
 
-## Installation
 
-### TODO
+## Requirements
+
+- Docker
+- npm
+- Node.js
+
+
+## Installation
+```bash
+#  Build docker images
+$ cp .env.example .env
+$ npm run build:front
+$ npm run build:back
+
+# Run containers
+$ npm run start:db
+$ npm run start:front
+$ npm run start:back
+```
 
 ## Local development
+#### Next.js app (only for testing purpose)
+Frontend is running [http://localhost:3000](http://localhost:3000)
 
-### TODO
+#### Nest.js app
+Backend is running [http://localhost:3001](http://localhost:3001)
+
+## Project structure
+```
+  fms-api -> nest.js app
+    |- src
+      |- api -> api module
+        |- simulations -> All logic related with simulations
+        |- liveupdate -> All logice responsible for live update with websockets
+        |- games -> Schema and services for handling games update
+      |- 
+    |- test -> e2e tests 
+  fms-frontend -> next.js app
+```
+
+## Tests
+Test were only implemented for the backend part
+
+Instructions to run it:
+```bash
+$ cd fms-api
+$ yarn install
+$ yarn test
+```
 
 ## Scalability improvements
 
