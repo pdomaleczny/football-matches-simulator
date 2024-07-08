@@ -57,6 +57,14 @@ Backend is running [http://localhost:3001](http://localhost:3001)
   fms-frontend -> next.js app
 ```
 
+## Endpoints
+
+```bash
+  GET /api/simulations -> get current simulations
+  POST /api/simulations -> create or start simulation
+  POST /api/simulations/end -> stop manually simulation
+```
+
 ## Tests
 Tests were only implemented for the backend part as Frontend was only implemented for testing purpose
 
