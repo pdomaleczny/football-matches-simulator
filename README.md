@@ -60,7 +60,7 @@ Backend is running [http://localhost:3001](http://localhost:3001)
 ## Endpoints
 
 ```bash
-  GET /api/simulations -> get current simulations
+  GET /api/simulations -> get current simulation
   POST /api/simulations -> create or start simulation
   POST /api/simulations/end -> stop manually simulation
 ```
